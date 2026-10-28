@@ -1,0 +1,174 @@
+# ======================================
+#  COBRA FINDER - Lost and Found Tracker
+# ======================================
+
+users = {} # users: studentID_number
+items = {} # items: item ID number
+
+item_counter = 1   # used to give each item its own ID number
+SCHOOL_DOMAIN = "@phinmaed.com"
+
+
+# FUNCTIONS
+
+def create_account():
+    print("\n××××× CREATE ACCOUNT ×××××")
+    while True:
+        username = input("Enter username: ").strip().lower()
+        email = input("Enter your school email: ").strip().lower()
+        studentID_number = input("Student ID Number: ").strip()   
+
+        if email.endswith(SCHOOL_DOMAIN):
+            users[studentID_number] = {
+                "username": username,
+                "email": email
+            }
+            print()
+            print("Account created successfully.")
+            return username
+        else:
+            print("ACCESS DENIED. Please use your SWU email", SCHOOL_DOMAIN)
+            retry = input("Try again? (yes/no): ").lower()
+            if retry != "yes":
+                return None
+
+
+def log_in():
+    print("\n××××× LOG IN ×××××")
+    while True:
+        studentID_number = input("Student ID Number: ").strip()
+
+        if studentID_number in users:
+            username = users[studentID_number]["username"]
+            print()
+            print("Welcome back, Cobra " + username + "!")
+            return username
+        else:
+            print("Please create account first! ")
+            retry = input("Try again? (yes/no): ").lower()
+            if retry != "yes":
+                return 
+                 
+
+def lost_item(username):
+    global item_counter
+
+    print("\n===== LOST ITEM FORM =====")
+    item_name = input("Item name: ")
+    description = input("Description (color, brand, etc.): ")
+    location = input("Where did you lose it? ")
+    date = input("Date (e.g. 09/28/2026): ")
+    note = input("Additional infos: ")
+
+    items[item_counter] = {
+        "status": "Lost",
+        "item_name": item_name,
+        "description": description,
+        "location": location,
+        "date": date,
+        "note": note,
+        "reported_by": username,
+    }
+
+    print("\n××××× Item saved! Your item ID is:", item_counter)
+    item_counter += 1
+
+
+def found_item(username):
+    global item_counter
+
+    print("\n===== FOUND ITEM FORM =====")
+    item_name = input("Item name: ")
+    description = input("Description (color, brand, etc.): ")
+    location = input("Where did you find it? ")
+    date = input("Date (e.g. 09/28/2026): ")
+    note = input("Additional infos: ")
+
+    items[item_counter] = {
+        "status": "Found",
+        "item_name": item_name,
+        "description": description,
+        "location": location,
+        "date": date,
+        "note": note,
+        "reported_by": username,
+    }
+
+    print("\nItem saved! Your item ID is:", item_counter)
+    item_counter += 1
+
+
+def view_items(): #
+    print("\n===== ALL REPORTED ITEMS =====")
+    if len(items) == 0: #
+        print("No items reported yet.")
+    else:
+        for item_id in items:
+            item = items[item_id]
+            print("ID:", item_id)
+            print("  Status:      ", item["status"])
+            print("  Item:        ", item["item_name"])
+            print("  Description: ", item["description"])
+            print("  Location:    ", item["location"])
+            print("  Date:        ", item["date"])
+            print("  Note:        ", item["note"])
+            print("  Reported by: ", item["reported_by"])
+            print("-" * 40)
+
+# MAIN MENU 
+
+def main_menu(username):
+    """Lost something or Found something?"""
+    while True:
+        print("\n===== WHAT TO DO? =====")
+        print("1. Lost something?")
+        print("2. Found something?")
+        print("3. View all items")
+        print("4. Log out")
+        choice = input("Choose (1-4): ")
+
+        if choice == "1":
+            lost_item(username)
+        elif choice == "2":
+            found_item(username)
+        elif choice == "3":
+            view_items()
+        elif choice == "4":
+            print("Logged out. If you found or lost something, COBRA FINDER will help you. :) See you,", username + "!")
+            break
+        else:
+            print("Invalid choice. Please type 1, 2, 3, or 4.")
+
+
+ # DASHBOARD
+
+def dashboard():
+    while True:
+        print("\n========================================")
+        print("        COBRA FINDER")
+        print("×××   Lost and Found Tracker   ×××")
+        print("==========================================")
+        print("1. Create account")
+        print("2. Log in")
+        print("3. Exit")
+        choice = input("Choose (1-3): ")
+
+        if choice == "1":
+            username = create_account()
+            if username is not None: #
+                username = log_in()
+                if username is not None:
+                    main_menu(username)
+        elif choice == "2":
+            username = log_in()
+            if username is not None: #
+                main_menu(username)
+        elif choice == "3":
+            print("Thank you for using COBRA FINDER", "!")
+            break
+        else:
+            print("Invalid choice. Please type 1, 2, or 3.")
+
+
+#the start of the program 
+dashboard()
